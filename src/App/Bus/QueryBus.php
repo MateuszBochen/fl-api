@@ -5,11 +5,6 @@ namespace App\Bus;
 use Symfony\Component\Messenger\HandleTrait;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-/**
- * Description of CommandBus
- *
- * @author Cydrick Nonog <cydrick.dev@gmail.com>
- */
 class QueryBus implements \Cydrickn\DDD\Common\Query\QueryBusInterface
 {
     use HandleTrait {

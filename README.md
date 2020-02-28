@@ -6,22 +6,16 @@ Event Sourcing for symfony.
 ## How to install
 
 ```bash
-composer create-project cydrickn/symfony-ddd-cqrs-es
+composer install
 ```
 
-## Run using docker
-
-```bash
-cd opt/
-docker-compose up -d
-```
 
 Run migration when all container are ready
 
 ```bash
-docker-compose exec php php bin/console doctrine:migrations:migrate
+php bin/console doctrine:migrations:migrate
 ```
 
-Now you can access the site using http://localhost:8080/
+Now you can access the site using http://your-vhost/
 
-You can access the api doc using http://localhost:8080/api/doc
+You can access the api doc using http://your-vhost/api/doc

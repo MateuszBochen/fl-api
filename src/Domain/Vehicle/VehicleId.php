@@ -1,18 +1,12 @@
 <?php
 
 
-
-namespace {{ namespace }};
+namespace Domain\Vehicle;
 
 use Cydrickn\DDD\Common\Domain\ValueObject\DomainId;
 use Ramsey\Uuid\Uuid;
 
-/**
- * Description of VehicleId
- *
- * @author {{ author.name }} <{{ author.email }}>
- */
-class {{ domain }}Id extends DomainId
+class VehicleId extends DomainId
 {
     final public static function generate(): self
     {

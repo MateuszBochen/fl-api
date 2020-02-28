@@ -3,14 +3,15 @@
 
 namespace Domain\Vehicle\Repository;
 
-
 use Domain\Vehicle\Vehicle;
+use Domain\Vehicle\VehicleId;
+
 
 interface VehicleRepositoryInterface
 {
-    public function get(int $id): Vehicle;
+    public function get(VehicleId $id): Vehicle;
 
     public function store(Vehicle $vehicle): void;
 
-    public function exists(Vehicle $vehicle): bool;
+    public function exists(VehicleId $id): bool;
 }

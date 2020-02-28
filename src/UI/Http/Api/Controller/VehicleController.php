@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+
 
 namespace UI\Http\Api\Controller;
 
@@ -10,12 +10,12 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use UI\Http\Api\Request\CreateVehicleRequest;
-use UI\Http\Api\Request\GetAllUserRequest;
-use UI\Http\Api\Request\GetUserRequest;
+use UI\Http\Api\Request\GetAllVehicleRequest;
+use UI\Http\Api\Request\GetVehicleRequest;
 use UI\Http\Bus\RequestBus;
 
 /**
- * Description of UserController
+ * Description of VehicleController
  *
  * @author Cydrick Nonog <cydrick.dev@gmail.com>
  *
@@ -30,19 +30,20 @@ class VehicleController extends AbstractController
      *     name="body",
      *     in="body",
      *     @SWG\Schema(
-     *         @SWG\Property(property="registration_number", type="string"),
+     *         @SWG\Property(property="registartion_number", type="string"),
      *         @SWG\Property(property="brand", type="string"),
      *         @SWG\Property(property="model", type="string"),
      *     )
      * )
      * @SWG\Response(
      *     response=201,
-     *     description="Successfully added new vehicle",
+     *     description="Vehicle Created an account",
      *     @SWG\Schema(
-     *         @SWG\Property(property="id", type="string", example="92960a78-2a43-4ccb-8c82-b436c831a532"),
-     *         @SWG\Property(property="brand", type="string", example="admin"),
-     *         @SWG\Property(property="model", type="string", example="2019-02-03"),
-     *         @SWG\Property(property="create_date", type="string", example="2019-02-03"),
+     *         @SWG\Property(property="id", type="string"),
+     *         @SWG\Property(property="registartion_number", type="string"),
+     *         @SWG\Property(property="brand", type="string"),
+     *         @SWG\Property(property="model", type="string"),
+     *         @SWG\Property(property="create_at", type="string")
      *     )
      * )
      * @SWG\Response(
@@ -54,16 +55,16 @@ class VehicleController extends AbstractController
      *     )
      * )
      */
-    public function create(Request $request, RequestBus $bus): Response
+    public function createVehicle(Request $request, RequestBus $bus): Response
     {
-        $createUserRequest = CreateVehicleRequest::createFromRequest($request);
+        $createVehicleRequest = CreateVehicleRequest::createFromRequest($request);
 
-        return $bus->handle($createUserRequest);
+        return $bus->handle($createVehicleRequest);
     }
 
     /**
      * @Route("/get", methods={"GET"})
-     * @SWG\Tag(name="User")
+     * @SWG\Tag(name="Vehicle")
      * @SWG\Parameter(
      *     name="id",
      *     in="query",
@@ -74,25 +75,25 @@ class VehicleController extends AbstractController
      *     description="OK"
      * )
      */
-    public function getById(Request $request, RequestBus $bus): Response
+    public function getSpecificVehicle(Request $request, RequestBus $bus): Response
     {
-        $getUserRequest = GetUserRequest::createFromRequest($request);
+        $getVehicleRequest = GetVehicleRequest::createFromRequest($request);
 
-        return $bus->handle($getUserRequest);
+        return $bus->handle($getVehicleRequest);
     }
 
     /**
      * @Route("/all", methods={"GET"})
-     * @SWG\Tag(name="User")
+     * @SWG\Tag(name="Vehicle")
      * @SWG\Response(
      *     response=200,
      *     description="OK"
      * )
      */
-    public function getAll(Request $request, RequestBus $bus): Response
+    public function getAllVehicle(Request $request, RequestBus $bus): Response
     {
-        $getUserAllRequest = GetAllUserRequest::createFromRequest($request);
+        $getVehicleAllRequest = GetAllVehicleRequest::createFromRequest($request);
 
-        return $bus->handle($getUserAllRequest);
+        return $bus->handle($getVehicleAllRequest);
     }
 }

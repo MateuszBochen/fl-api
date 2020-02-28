@@ -1,16 +1,15 @@
 <?php
 
-
 namespace UI\Http\Api\Request;
 
 use Symfony\Component\HttpFoundation\Request;
 
-
 class CreateVehicleRequest
 {
+    private string $registrationNumber;
 
-    private string $registrationNumber; // registration_number
     private string $brand;
+
     private string $model;
 
     public static function createFromRequest(Request $request): self

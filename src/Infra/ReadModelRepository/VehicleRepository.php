@@ -1,29 +1,23 @@
 <?php
 
-
-
 namespace Infra\ReadModelRepository;
 
 use Cydrickn\DDD\Common\ReadModel\AbstractReadModelIterator;
 use Cydrickn\DDD\Common\ReadModel\ReadModelInterface;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\FetchMode;
-use {{ namespace }}\ReadModel\{{ domain }};
-use {{ namespace }}\ReadModel\{{ domain }}RepositoryInterface;
-use {{ namespace }}\{{ domain }}Id;
+use Domain\Vehicle\ReadModel\Vehicle;
+use Domain\Vehicle\ReadModel\VehicleRepositoryInterface;
+use Domain\Vehicle\VehicleId;
 use Infra\Iterator\DBALReadModelIterator;
 
-/**
- * Description of {{ domain }}Repository
- *
- * @author {{ author.name }} <{{ author.email }}>
- */
-class {{ domain }}Repository implements {{ domain }}RepositoryInterface
+
+class VehicleRepository implements VehicleRepositoryInterface
 {
     /**
      * @var Connection
      */
-    private $connection;
+    private Connection $connection;
 
     public function __construct(Connection $connection)
     {
@@ -33,9 +27,9 @@ class {{ domain }}Repository implements {{ domain }}RepositoryInterface
     public function find(string $id): ?ReadModelInterface
     {
         $queryBuilder = $this->connection->createQueryBuilder()
-            ->select('d.*')
-            ->from('{{ domain|snake_case }}', 'd')
-            ->where('d.id = :id')
+            ->select('v.*')
+            ->from('vehicle', 'v')
+            ->where('v.id = :id')
             ->setMaxResults(1)
             ->setParameter('id', $id);
 
@@ -44,33 +38,21 @@ class {{ domain }}Repository implements {{ domain }}RepositoryInterface
             return null;
         }
 
-        return {{ domain }}::deserialize($result);
+        return Vehicle::deserialize($result);
     }
 
     public function findAll(): AbstractReadModelIterator
     {
         $queryBuilder = $this->connection->createQueryBuilder()
-            ->select('d.*')
-            ->from('{{ domain|snake_case }}', 'd');
+            ->select('v.*')
+            ->from('vehicle', 'v');
 
-        return new DBALReadModelIterator({{ domain }}::class, $queryBuilder->execute());
+        return new DBALReadModelIterator(Vehicle::class, $queryBuilder->execute());
     }
 
     public function remove(string $id): void
     {
-        try {
-            $this->connection->beginTransaction();
-            $this->connection
-                ->createQueryBuilder()
-                ->delete('{{ domain|snake_case }}', 'd')
-                ->where('d.id = :id')
-                ->setParameter('id', $id)
-                ->execute();
-            $this->connection->commit();
-        } catch (\Exception $ex) {
-            $this->connection->rollBack();
-            throw $ex;
-        }
+
     }
 
     public function save(ReadModelInterface $readModel): void
@@ -78,11 +60,29 @@ class {{ domain }}Repository implements {{ domain }}RepositoryInterface
         try {
             $this->connection->beginTransaction();
             $data = $readModel->serialize();
-            $this->connection->insert('{{ domain|snake_case }}', $data);
+            $this->connection->insert('vehicle', $data);
             $this->connection->commit();
         } catch (\Exception $e) {
             $this->connection->rollBack();
             throw $e;
         }
+    }
+
+    public function findIdByRegistrationNumber(string $registrationNumber): ?VehicleId
+    {
+        $queryBuilder = $this->connection->createQueryBuilder()
+            ->select('v.id')
+            ->from('vehicle', 'v')
+            ->where('v.registration_number = :registrationNumber')
+            ->setMaxResults(1)
+            ->setParameter('registrationNumber', $registrationNumber);
+
+        $result = $queryBuilder->execute()->fetch(FetchMode::ASSOCIATIVE);
+
+        if ($result === false) {
+            return null;
+        }
+
+        return VehicleId::fromString($result['id']);
     }
 }

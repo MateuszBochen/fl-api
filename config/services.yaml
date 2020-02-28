@@ -39,21 +39,15 @@ services:
         resource: '%kernel.project_dir%/src/App/Query/*/*Handler.php'
         tags: [{ name: messenger.message_handler, bus: messenger.bus.query }]
 
-
-    App\Encoder\:
-        resource: '%kernel.project_dir%/src/App/Encoder'
-
-    Domain\Common\Password\PasswordEncoderInterface: '@App\Encoder\PasswordEncoder'
-
     Infra\Repository\:
         resource: '%kernel.project_dir%/src/Infra/Repository'
 
-    Domain\User\Repository\UserRepositoryInterface: '@Infra\Repository\UserRepository'
+    Domain\Vehicle\Repository\VehicleRepositoryInterface: '@Infra\Repository\VehicleRepository'
 
     Infra\ReadModelRepository\:
         resource: '%kernel.project_dir%/src/Infra/ReadModelRepository'
 
-    Domain\User\ReadModel\UserRepositoryInterface: '@Infra\ReadModelRepository\UserRepository'
+    Domain\Vehicle\ReadModel\VehicleRepositoryInterface: '@Infra\ReadModelRepository\VehicleRepository'
 
     Cydrickn\EventStore\Dbal\DbalEventStore: ~
 

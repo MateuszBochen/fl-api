@@ -1,6 +1,5 @@
 <?php
 
-declare(strict_types = 1);
 
 namespace Infra\Repository;
 
@@ -8,28 +7,27 @@ use Cydrickn\DDD\Common\EventSourcing\EventSourcedRepositoryInterface;
 use Cydrickn\DDD\Common\EventSourcing\EventSourceInterface;
 use Cydrickn\DDD\Common\EventSourcing\Exceptions\ClassIsNotEventSourcedException;
 use Cydrickn\DDD\Common\EventStore\EventMessage;
-use Cydrickn\DDD\Common\EventStore\EventStoreInterface;
 use Cydrickn\DDD\Common\EventStore\StreamName;
 use Cydrickn\DDD\Common\EventStore\TransactionalEventStoreInterface;
 use Infra\DataSource\EventStore\EventStore;
 use Symfony\Component\Messenger\MessageBusInterface;
 
-/**
- * Description of AbstractRepository
- *
- * @author Cydrick Nonog <cydrick.dev@gmail.com>
- */
+
 abstract class AbstractEventSourceRepository implements EventSourcedRepositoryInterface
 {
+    const STREAM_NAME = 'event_store';
+    const ADD_METADATA_TYPE = 'aggregate_type';
+    const AGGREGATE_ID = 'aggregate_id';
+
     /**
      * @var TransactionalEventStoreInterface
      */
-    private $eventStore;
+    private TransactionalEventStoreInterface $eventStore;
 
     /**
      * @var MessageBusInterface
      */
-    private $domainEventBus;
+    private MessageBusInterface $domainEventBus;
 
     public function __construct(TransactionalEventStoreInterface $eventStore, MessageBusInterface $domainEventBus)
     {
@@ -43,7 +41,7 @@ abstract class AbstractEventSourceRepository implements EventSourcedRepositoryIn
             $this->getStreamName(),
             1,
             1,
-            ['aggregate_id' => $id, 'aggregate_type' => $this->getAggregateType()]
+            [self::AGGREGATE_ID => $id, self::ADD_METADATA_TYPE => $this->getAggregateType()]
         );
 
         return $event->valid();
@@ -55,7 +53,7 @@ abstract class AbstractEventSourceRepository implements EventSourcedRepositoryIn
             $this->getStreamName(),
             1,
             null,
-            ['aggregate_id' => $id, 'aggregate_type' => $this->getAggregateType()]
+            [self::AGGREGATE_ID => $id, self::ADD_METADATA_TYPE => $this->getAggregateType()]
         );
 
         $class = $this->getAggregateClass();
@@ -79,7 +77,7 @@ abstract class AbstractEventSourceRepository implements EventSourcedRepositoryIn
             $this->eventStore->beginTransaction();
             $this->saveSourceEvents(new \ArrayIterator($eventSourced->getUncommitedEvents()));
             $this->eventStore->commit();
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             $this->eventStore->rollback();
             throw $ex;
         }
@@ -90,7 +88,7 @@ abstract class AbstractEventSourceRepository implements EventSourcedRepositoryIn
         try {
             $this->eventStore->beginTransaction();
             foreach ($events as $event) {
-                $this->saveSourceEvent($event->withAddedMetadata('aggregate_type', $this->getAggregateType()));
+                $this->saveSourceEvent($event->withAddedMetadata(self::ADD_METADATA_TYPE, $this->getAggregateType()));
             }
             $this->eventStore->commit();
         } catch (\Exception $e) {
@@ -114,7 +112,7 @@ abstract class AbstractEventSourceRepository implements EventSourcedRepositoryIn
 
     protected function getStreamName(): StreamName
     {
-        return new StreamName('event_store');
+        return new StreamName(self::STREAM_NAME);
     }
 
     abstract protected function getAggregateType(): string;
