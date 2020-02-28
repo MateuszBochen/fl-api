@@ -14,5 +14,6 @@
 ###> IDE ###
 
 /nbproject/
+.idea/
 
 ###< IDE ###

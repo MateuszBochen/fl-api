@@ -1,7 +1,5 @@
 <?php
 
-
-
 namespace UI\Http\Api\Controller;
 
 use Swagger\Annotations as SWG;
@@ -15,9 +13,6 @@ use UI\Http\Api\Request\GetVehicleRequest;
 use UI\Http\Bus\RequestBus;
 
 /**
- * Description of VehicleController
- *
- * @author Cydrick Nonog <cydrick.dev@gmail.com>
  *
  * @Route("/vehicle")
  */
@@ -54,6 +49,9 @@ class VehicleController extends AbstractController
      *         @SWG\Property(property="errors", type="object"),
      *     )
      * )
+     * @param Request $request
+     * @param RequestBus $bus
+     * @return Response
      */
     public function createVehicle(Request $request, RequestBus $bus): Response
     {
@@ -74,6 +72,9 @@ class VehicleController extends AbstractController
      *     response=200,
      *     description="OK"
      * )
+     * @param Request $request
+     * @param RequestBus $bus
+     * @return Response
      */
     public function getSpecificVehicle(Request $request, RequestBus $bus): Response
     {
@@ -89,6 +90,9 @@ class VehicleController extends AbstractController
      *     response=200,
      *     description="OK"
      * )
+     * @param Request $request
+     * @param RequestBus $bus
+     * @return Response
      */
     public function getAllVehicle(Request $request, RequestBus $bus): Response
     {
