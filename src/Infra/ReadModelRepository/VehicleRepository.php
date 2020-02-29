@@ -50,9 +50,26 @@ class VehicleRepository implements VehicleRepositoryInterface
         return new DBALReadModelIterator(Vehicle::class, $queryBuilder->execute());
     }
 
+    /**
+     * remove record from db
+     * @param string $id
+     * @throws \Doctrine\DBAL\ConnectionException
+     * @author Mateusz Bochen
+     */
     public function remove(string $id): void
     {
-
+        try {
+            $this->connection->beginTransaction();
+            $this->connection->createQueryBuilder()
+                ->delete('vehicle')
+                ->where('id = :id')
+                ->setParameter('id', $id)
+                ->execute();
+            $this->connection->commit();
+        } catch (\Exception $exception) {
+            $this->connection->rollBack();
+            throw $exception;
+        }
     }
 
     public function save(ReadModelInterface $readModel): void

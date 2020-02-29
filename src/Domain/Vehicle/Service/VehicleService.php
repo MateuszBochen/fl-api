@@ -4,6 +4,8 @@
 namespace Domain\Vehicle\Service;
 
 use Domain\Vehicle\Event\VehicleWasCreated;
+use Domain\Vehicle\Event\VehicleWasDeleted;
+use Domain\Vehicle\Exceptions\VehicleIdDoesNotExistsException;
 use Domain\Vehicle\Exceptions\VehicleRegistrationNumberAlreadyExistsException;
 use Domain\Vehicle\ReadModel\VehicleRepositoryInterface;
 use Domain\Vehicle\Vehicle;
@@ -39,6 +41,31 @@ class VehicleService
             $vehicleBrand,
             $vehicleModel,
             new \DateTimeImmutable('now', new \DateTimeZone('UTC')),
+            new \DateTimeImmutable('now', new \DateTimeZone('UTC'))
+        );
+
+        $vehicle = new Vehicle();
+        $vehicle->applyEvent($event);
+
+        return $vehicle;
+    }
+
+    public function deleteVehicle(VehicleId $vehicleId)
+    {
+        $vehicle = $this->vehicleReadModelRepository->find($vehicleId);
+
+        if (!$vehicle) {
+            throw new VehicleIdDoesNotExistsException($vehicleId);
+        }
+
+        $this->vehicleReadModelRepository->remove($vehicleId);
+
+        $event = new VehicleWasDeleted(
+            $vehicleId,
+            $vehicle->getRegistrationNumber(),
+            $vehicle->getBrand(),
+            $vehicle->getModel(),
+            $vehicle->getCreatedAt(),
             new \DateTimeImmutable('now', new \DateTimeZone('UTC'))
         );
 

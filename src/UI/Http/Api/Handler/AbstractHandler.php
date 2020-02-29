@@ -1,7 +1,6 @@
 <?php
 
 
-
 namespace UI\Http\Api\Handler;
 
 /**

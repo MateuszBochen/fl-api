@@ -48,11 +48,6 @@ class Vehicle extends AbstractReadModel
         ];
     }
 
-    public function getId(): string
-    {
-        return $this->id->toString();
-    }
-
     public function applyVehicleWasCreated(VehicleWasCreated $event): void
     {
         $this->registrationNumber = $event->getVehicleRegistrationNumber();
@@ -62,5 +57,50 @@ class Vehicle extends AbstractReadModel
         $this->createdAt = $event->getCreatedAt();
         $this->lastUpdate = $event->getLastUpdate();
         $this->id = $event->getId();
+    }
+
+    /**
+     * @return VehicleRegistrationNumber
+     */
+    public function getRegistrationNumber(): VehicleRegistrationNumber
+    {
+        return $this->registrationNumber;
+    }
+
+    /**
+     * @return VehicleBrand
+     */
+    public function getBrand(): VehicleBrand
+    {
+        return $this->brand;
+    }
+
+    /**
+     * @return VehicleModel
+     */
+    public function getModel(): VehicleModel
+    {
+        return $this->model;
+    }
+
+    /**
+     * @return \DateTimeImmutable
+     */
+    public function getCreatedAt(): \DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    /**
+     * @return \DateTimeImmutable
+     */
+    public function getLastUpdate(): \DateTimeImmutable
+    {
+        return $this->lastUpdate;
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
     }
 }

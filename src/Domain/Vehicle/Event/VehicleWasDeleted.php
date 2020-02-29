@@ -12,6 +12,6 @@ use Domain\Vehicle\VehicleModel;
 use Domain\Vehicle\VehicleRegistrationNumber;
 
 
-final class VehicleWasCreated extends AbstractVehicleEvent
+final class VehicleWasDeleted extends AbstractVehicleEvent
 {
 }

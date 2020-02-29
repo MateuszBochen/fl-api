@@ -2,7 +2,6 @@
 
 namespace Infra\Repository;
 
-use Cydrickn\DDD\Common\EventStore\EventStoreInterface;
 use Domain\Vehicle\Repository\VehicleRepositoryInterface;
 use Domain\Vehicle\Vehicle;
 use Domain\Vehicle\VehicleId;
@@ -10,7 +9,7 @@ use Domain\Vehicle\VehicleId;
 /**
  * Description of VehicleRepository
  *
- * @author Cydrick Nonog <cydrick.dev@gmail.com>
+ * @author Mateusz Bochen
  */
 class VehicleRepository extends AbstractEventSourceRepository implements VehicleRepositoryInterface
 {

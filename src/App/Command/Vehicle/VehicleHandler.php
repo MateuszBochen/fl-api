@@ -4,6 +4,7 @@ namespace App\Command\Vehicle;
 
 
 use Cydrickn\DDD\Common\Command\AbstractCommandHandler;
+use Domain\Vehicle\Exceptions\VehicleIdDoesNotExistsException;
 use Domain\Vehicle\Repository\VehicleRepositoryInterface;
 use Domain\Vehicle\Service\VehicleService;
 use Domain\Vehicle\VehicleBrand;
@@ -27,6 +28,7 @@ class VehicleHandler extends AbstractCommandHandler implements MessageSubscriber
     public static function getHandledMessages(): iterable
     {
         yield CreateVehicle::class;
+        yield DeleteVehicle::class;
     }
 
     public function __construct(
@@ -37,6 +39,9 @@ class VehicleHandler extends AbstractCommandHandler implements MessageSubscriber
         $this->vehicleService = $vehicleService;
     }
 
+    /**
+     * @param CreateVehicle $command
+     */
     protected function handleCreateVehicle(CreateVehicle $command): void
     {
         $vehicle = $this->vehicleService->createVehicle(
@@ -45,6 +50,18 @@ class VehicleHandler extends AbstractCommandHandler implements MessageSubscriber
             new VehicleBrand($command->getBrand()),
             new VehicleModel($command->getModel())
         );
+
+        $this->vehicleRepository->store($vehicle);
+    }
+
+    /**
+     * @param DeleteVehicle $deleteVehicleCommand
+     * @author Mateusz Bochen
+     */
+    protected function handleDeleteVehicle(DeleteVehicle $deleteVehicleCommand)
+    {
+
+        $vehicle = $this->vehicleService->deleteVehicle($deleteVehicleCommand->getVehicleId());
 
         $this->vehicleRepository->store($vehicle);
     }

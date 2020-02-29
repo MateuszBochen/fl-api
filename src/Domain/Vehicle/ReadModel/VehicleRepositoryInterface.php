@@ -8,5 +8,5 @@ use Domain\Vehicle\VehicleId;
 
 interface VehicleRepositoryInterface extends ReadModelRepositoryInterface
 {
-    public function findIdByRegistrationNumber(string $vehiclename): ?VehicleId;
+    public function findIdByRegistrationNumber(string $registrationNumber): ?VehicleId;
 }

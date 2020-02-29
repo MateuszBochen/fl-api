@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use UI\Http\Api\Request\CreateVehicleRequest;
 use UI\Http\Api\Request\GetAllVehicleRequest;
 use UI\Http\Api\Request\GetVehicleRequest;
+use UI\Http\Api\Request\DeleteVehicleRequest;
 use UI\Http\Bus\RequestBus;
 
 /**
@@ -79,6 +80,29 @@ class VehicleController extends AbstractController
     public function getSpecificVehicle(Request $request, RequestBus $bus): Response
     {
         $getVehicleRequest = GetVehicleRequest::createFromRequest($request);
+
+        return $bus->handle($getVehicleRequest);
+    }
+
+    /**
+     * @Route("/delete", methods={"DELETE"})
+     * @SWG\Tag(name="Vehicle")
+     * @SWG\Parameter(
+     *     name="id",
+     *     in="query",
+     *     type="string"
+     * )
+     * @SWG\Response(
+     *     response=204,
+     *     description="No Content"
+     * )
+     * @param Request $request
+     * @param RequestBus $bus
+     * @return Response
+     */
+    public function deleteVehicle(Request $request, RequestBus $bus): Response
+    {
+        $getVehicleRequest = DeleteVehicleRequest::createFromRequest($request);
 
         return $bus->handle($getVehicleRequest);
     }
