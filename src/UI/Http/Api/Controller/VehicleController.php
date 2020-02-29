@@ -11,6 +11,7 @@ use UI\Http\Api\Request\CreateVehicleRequest;
 use UI\Http\Api\Request\GetAllVehicleRequest;
 use UI\Http\Api\Request\GetVehicleRequest;
 use UI\Http\Api\Request\DeleteVehicleRequest;
+use UI\Http\Api\Request\UpdateVehicleRequest;
 use UI\Http\Bus\RequestBus;
 
 /**
@@ -57,6 +58,48 @@ class VehicleController extends AbstractController
     public function createVehicle(Request $request, RequestBus $bus): Response
     {
         $createVehicleRequest = CreateVehicleRequest::createFromRequest($request);
+
+        return $bus->handle($createVehicleRequest);
+    }
+
+    /**
+     * @Route("/update", methods={"PUT"})
+     * @SWG\Tag(name="Vehicle")
+     * @SWG\Parameter(
+     *     name="body",
+     *     in="body",
+     *     @SWG\Schema(
+     *         @SWG\Property(property="registartion_number", type="string"),
+     *         @SWG\Property(property="brand", type="string"),
+     *         @SWG\Property(property="model", type="string"),
+     *     )
+     * )
+     * @SWG\Response(
+     *     response=204,
+     *     description="Vehicle Updated",
+     *     @SWG\Schema(
+     *         @SWG\Property(property="id", type="string"),
+     *         @SWG\Property(property="registartion_number", type="string"),
+     *         @SWG\Property(property="brand", type="string"),
+     *         @SWG\Property(property="model", type="string"),
+     *         @SWG\Property(property="create_at", type="string")
+     *     )
+     * )
+     * @SWG\Response(
+     *     response=422,
+     *     description="Validation failed",
+     *     @SWG\Schema(
+     *         @SWG\Property(property="message", type="string", example="Invalid Input"),
+     *         @SWG\Property(property="errors", type="object"),
+     *     )
+     * )
+     * @param Request $request
+     * @param RequestBus $bus
+     * @return Response
+     */
+    public function updateVehicle(Request $request, RequestBus $bus): Response
+    {
+        $createVehicleRequest = UpdateVehicleRequest::createFromRequest($request);
 
         return $bus->handle($createVehicleRequest);
     }

@@ -29,6 +29,7 @@ class VehicleHandler extends AbstractCommandHandler implements MessageSubscriber
     {
         yield CreateVehicle::class;
         yield DeleteVehicle::class;
+        yield UpdateVehicle::class;
     }
 
     public function __construct(
@@ -55,12 +56,28 @@ class VehicleHandler extends AbstractCommandHandler implements MessageSubscriber
     }
 
     /**
+     * @param UpdateVehicle $command
+     */
+    protected function handleUpdateVehicle(UpdateVehicle $command): void
+    {
+        $vehicle = $this->vehicleService->updateVehicle(
+            $command->getVehicleId(),
+            new VehicleRegistrationNumber($command->getRegistrationNumber()),
+            new VehicleBrand($command->getBrand()),
+            new VehicleModel($command->getModel())
+        );
+
+        if (!$this->vehicleRepository->exists($vehicle->id())) {
+            $this->vehicleRepository->store($vehicle);
+        }
+    }
+
+    /**
      * @param DeleteVehicle $deleteVehicleCommand
      * @author Mateusz Bochen
      */
     protected function handleDeleteVehicle(DeleteVehicle $deleteVehicleCommand)
     {
-
         $vehicle = $this->vehicleService->deleteVehicle($deleteVehicleCommand->getVehicleId());
 
         $this->vehicleRepository->store($vehicle);

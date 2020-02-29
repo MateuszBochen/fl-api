@@ -5,6 +5,7 @@ namespace Domain\Vehicle\Service;
 
 use Domain\Vehicle\Event\VehicleWasCreated;
 use Domain\Vehicle\Event\VehicleWasDeleted;
+use Domain\Vehicle\Event\VehicleWasUpdated;
 use Domain\Vehicle\Exceptions\VehicleIdDoesNotExistsException;
 use Domain\Vehicle\Exceptions\VehicleRegistrationNumberAlreadyExistsException;
 use Domain\Vehicle\ReadModel\VehicleRepositoryInterface;
@@ -58,13 +59,45 @@ class VehicleService
             throw new VehicleIdDoesNotExistsException($vehicleId);
         }
 
-        $this->vehicleReadModelRepository->remove($vehicleId);
-
         $event = new VehicleWasDeleted(
             $vehicleId,
             $vehicle->getRegistrationNumber(),
             $vehicle->getBrand(),
             $vehicle->getModel(),
+            $vehicle->getCreatedAt(),
+            new \DateTimeImmutable('now', new \DateTimeZone('UTC'))
+        );
+
+        $vehicle = new Vehicle();
+        $vehicle->applyEvent($event);
+
+        return $vehicle;
+    }
+
+    public function updateVehicle(
+        VehicleId $vehicleId,
+        VehicleRegistrationNumber $vehicleRegistrationNumber,
+        VehicleBrand $vehicleBrand,
+        VehicleModel $vehicleModel
+    ){
+
+        $registrationNumberId = $this->vehicleReadModelRepository->findIdByRegistrationNumber($vehicleRegistrationNumber->toString());
+
+        if ($registrationNumberId !== null && !$vehicleId->equals($registrationNumberId)) {
+            throw new VehicleRegistrationNumberAlreadyExistsException(sprintf('VehicleRegistrationNumber %s already exists', $vehicleRegistrationNumber->toString()));
+        }
+
+        $vehicle = $this->vehicleReadModelRepository->find($vehicleId);
+
+        if (!$vehicle) {
+            throw new VehicleIdDoesNotExistsException($vehicleId);
+        }
+
+        $event = new VehicleWasUpdated(
+            $vehicleId,
+            $vehicleRegistrationNumber,
+            $vehicleBrand,
+            $vehicleModel,
             $vehicle->getCreatedAt(),
             new \DateTimeImmutable('now', new \DateTimeZone('UTC'))
         );

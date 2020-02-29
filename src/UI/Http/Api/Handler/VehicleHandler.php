@@ -8,9 +8,9 @@ use App\Bus\CommandBus;
 use App\Bus\QueryBus;
 use App\Command\Vehicle\CreateVehicle;
 use App\Command\Vehicle\DeleteVehicle;
+use App\Command\Vehicle\UpdateVehicle;
 use App\Query\Vehicle\GetAllVehicle;
 use App\Query\Vehicle\GetVehicle;
-use Doctrine\DBAL\Exception\UniqueConstraintViolationException;
 use Domain\Vehicle\Exceptions\VehicleIdDoesNotExistsException;
 use Domain\Vehicle\Exceptions\VehicleRegistrationNumberAlreadyExistsException;
 use Domain\Vehicle\VehicleId;
@@ -21,6 +21,7 @@ use UI\Http\Api\Request\CreateVehicleRequest;
 use UI\Http\Api\Request\GetAllVehicleRequest;
 use UI\Http\Api\Request\GetVehicleRequest;
 use UI\Http\Api\Request\DeleteVehicleRequest;
+use UI\Http\Api\Request\UpdateVehicleRequest;
 
 class VehicleHandler extends AbstractHandler implements MessageSubscriberInterface
 {
@@ -45,6 +46,7 @@ class VehicleHandler extends AbstractHandler implements MessageSubscriberInterfa
         yield GetVehicleRequest::class;
         yield GetAllVehicleRequest::class;
         yield DeleteVehicleRequest::class;
+        yield UpdateVehicleRequest::class;
     }
 
     public function __construct(CommandBus $commandBus, QueryBus $queryBus, LoggerInterface $logger)
@@ -118,6 +120,31 @@ class VehicleHandler extends AbstractHandler implements MessageSubscriberInterfa
 
         try {
             $command = new DeleteVehicle($vehicleId);
+            $this->commandBus->handle($command);
+        } catch (VehicleIdDoesNotExistsException $e) {
+            return new JsonResponse(['message' => $e->getMessage()], JsonResponse::HTTP_NOT_FOUND);
+        }
+
+        return new JsonResponse([]); // delete method should return empty content
+    }
+
+    /**
+     * @param UpdateVehicleRequest $request
+     * @return JsonResponse
+     * @author Mateusz Bochen
+     */
+    public function handleUpdateVehicleRequest(UpdateVehicleRequest $request): JsonResponse
+    {
+        $vehicleId = new VehicleId($request->getId());
+
+        try {
+            $command = new UpdateVehicle(
+                $vehicleId,
+                $request->getRegistrationNumber(),
+                $request->getBrand(),
+                $request->getModel(),
+            );
+
             $this->commandBus->handle($command);
         } catch (VehicleIdDoesNotExistsException $e) {
             return new JsonResponse(['message' => $e->getMessage()], JsonResponse::HTTP_NOT_FOUND);

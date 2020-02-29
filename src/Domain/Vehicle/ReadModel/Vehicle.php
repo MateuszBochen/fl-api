@@ -5,7 +5,10 @@ namespace Domain\Vehicle\ReadModel;
 use Cydrickn\DDD\Common\Domain\ValueObject\DomainIdInterface;
 use Cydrickn\DDD\Common\ReadModel\AbstractReadModel;
 use Cydrickn\DDD\Common\Serializer\Serializable;
+use Domain\Vehicle\Event\AbstractVehicleEvent;
 use Domain\Vehicle\Event\VehicleWasCreated;
+use Domain\Vehicle\Event\VehicleWasDeleted;
+use Domain\Vehicle\Event\VehicleWasUpdated;
 use Domain\Vehicle\VehicleBrand;
 use Domain\Vehicle\VehicleId;
 use Domain\Vehicle\Vehicle as VehicleDomain;
@@ -50,13 +53,28 @@ class Vehicle extends AbstractReadModel
 
     public function applyVehicleWasCreated(VehicleWasCreated $event): void
     {
-        $this->registrationNumber = $event->getVehicleRegistrationNumber();
-        $this->brand = $event->getVehicleBrand();
-        $this->model = $event->getVehicleModel();
-        $this->model = $event->getVehicleModel();
-        $this->createdAt = $event->getCreatedAt();
-        $this->lastUpdate = $event->getLastUpdate();
-        $this->id = $event->getId();
+        $this->applyFromEvent($event);
+    }
+
+    public function applyVehicleWasDeleted(VehicleWasDeleted $event): void
+    {
+        $this->applyFromEvent($event);
+    }
+
+    public function applyVehicleWasUpdated(VehicleWasUpdated $event): void
+    {
+        $this->applyFromEvent($event);
+    }
+
+    private function applyFromEvent(AbstractVehicleEvent $abstractVehicleEvent)
+    {
+        $this->registrationNumber = $abstractVehicleEvent->getVehicleRegistrationNumber();
+        $this->brand = $abstractVehicleEvent->getVehicleBrand();
+        $this->model = $abstractVehicleEvent->getVehicleModel();
+        $this->model = $abstractVehicleEvent->getVehicleModel();
+        $this->createdAt = $abstractVehicleEvent->getCreatedAt();
+        $this->lastUpdate = $abstractVehicleEvent->getLastUpdate();
+        $this->id = $abstractVehicleEvent->getId();
     }
 
     /**

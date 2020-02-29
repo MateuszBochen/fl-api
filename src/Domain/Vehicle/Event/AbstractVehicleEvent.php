@@ -54,7 +54,7 @@ abstract class AbstractVehicleEvent implements DomainEventInterface
     public static function deserialize(array $data): Serializable
     {
         return new static(
-            VehicleId::fromString($data[ Vehicle::FILED_ID]),
+            VehicleId::fromString($data[Vehicle::FILED_ID]),
             new VehicleRegistrationNumber($data[Vehicle::FILED_VEHICLE_REGISTRATION_NUMBER]),
             new VehicleBrand($data[Vehicle::FILED_VEHICLE_BRAND]),
             new VehicleModel($data[Vehicle::FILED_VEHICLE_MODEL]),

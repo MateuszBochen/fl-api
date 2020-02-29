@@ -5,8 +5,10 @@ namespace Domain\Vehicle;
 use Cydrickn\DDD\Common\Domain\AbstractDomain;
 use Cydrickn\DDD\Common\EventSourcing\EventSourceInterface;
 use Cydrickn\DDD\Common\EventSourcing\EventSourceTrait;
+use Domain\Vehicle\Event\AbstractVehicleEvent;
 use Domain\Vehicle\Event\VehicleWasCreated;
 use Domain\Vehicle\Event\VehicleWasDeleted;
+use Domain\Vehicle\Event\VehicleWasUpdated;
 use Domain\Vehicle\Exceptions\InvalidIdException;
 
 
@@ -38,23 +40,29 @@ final class Vehicle extends AbstractDomain implements EventSourceInterface
 
     protected function applyVehicleWasCreatedEvent(VehicleWasCreated $event): void
     {
-        $this->id = $event->getId();
-        $this->vehicleRegistrationNumber = $event->getVehicleRegistrationNumber();
-        $this->vehicleBrand = $event->getVehicleBrand();
-        $this->vehicleModel = $event->getVehicleModel();
-        $this->createdAt = $event->getCreatedAt();
-        $this->lastUpdate = $event->getLastUpdate();
+        $this->applyFromEvent($event);
     }
 
     protected function applyVehicleWasDeletedEvent(VehicleWasDeleted $event): void
     {
-        $this->id = $event->getId();
-        $this->vehicleRegistrationNumber = $event->getVehicleRegistrationNumber();
-        $this->vehicleBrand = $event->getVehicleBrand();
-        $this->vehicleModel = $event->getVehicleModel();
-        $this->createdAt = $event->getCreatedAt();
-        $this->lastUpdate = $event->getLastUpdate();
+        $this->applyFromEvent($event);
     }
+
+    protected function applyVehicleWasUpdatedEvent(VehicleWasUpdated $event): void
+    {
+        $this->applyFromEvent($event);
+    }
+
+    private function applyFromEvent(AbstractVehicleEvent $abstractVehicleEvent)
+    {
+        $this->id = $abstractVehicleEvent->getId();
+        $this->vehicleRegistrationNumber = $abstractVehicleEvent->getVehicleRegistrationNumber();
+        $this->vehicleBrand = $abstractVehicleEvent->getVehicleBrand();
+        $this->vehicleModel = $abstractVehicleEvent->getVehicleModel();
+        $this->createdAt = $abstractVehicleEvent->getCreatedAt();
+        $this->lastUpdate = $abstractVehicleEvent->getLastUpdate();
+    }
+
 
     /**
      * @return VehicleRegistrationNumber

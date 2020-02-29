@@ -29,7 +29,7 @@ final class Version20200228213441 extends AbstractMigration
         $eventStore->addColumn('type', 'string', ['nullable' => false, 'length' => 255]);
         $eventStore->addColumn('recorded_on', 'datetime', ['nullable' => false]);
         $eventStore->setPrimaryKey(['id']);
-        $eventStore->addUniqueIndex(['aggregate_id', 'playhead', 'aggregate_type']);
+        // $eventStore->addUniqueIndex(['aggregate_id', 'playhead', 'aggregate_type']);
         $eventStore->addIndex(['recorded_on']);
         $eventStore->addIndex(['type']);
 

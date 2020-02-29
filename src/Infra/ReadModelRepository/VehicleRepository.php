@@ -85,6 +85,19 @@ class VehicleRepository implements VehicleRepositoryInterface
         }
     }
 
+    public function update(ReadModelInterface $readModel): void
+    {
+        try {
+            $this->connection->beginTransaction();
+            $data = $readModel->serialize();
+            $this->connection->update('vehicle', $data, ['id' => $readModel->getId()]);
+            $this->connection->commit();
+        } catch (\Exception $e) {
+            $this->connection->rollBack();
+            throw $e;
+        }
+    }
+
     public function findIdByRegistrationNumber(string $registrationNumber): ?VehicleId
     {
         $queryBuilder = $this->connection->createQueryBuilder()
