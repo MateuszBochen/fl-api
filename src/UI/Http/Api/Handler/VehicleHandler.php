@@ -150,6 +150,8 @@ class VehicleHandler extends AbstractHandler implements MessageSubscriberInterfa
             return new JsonResponse(['message' => $e->getMessage()], JsonResponse::HTTP_NOT_FOUND);
         }
 
-        return new JsonResponse([]); // delete method should return empty content
+        $query = new GetVehicle($vehicleId->toString());
+        $query->setResponseAsArray();
+        return new JsonResponse($this->queryBus->handle($query));
     }
 }

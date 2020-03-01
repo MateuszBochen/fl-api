@@ -29,17 +29,19 @@ final class Version20200228213441 extends AbstractMigration
         $eventStore->addColumn('type', 'string', ['nullable' => false, 'length' => 255]);
         $eventStore->addColumn('recorded_on', 'datetime', ['nullable' => false]);
         $eventStore->setPrimaryKey(['id']);
-        // $eventStore->addUniqueIndex(['aggregate_id', 'playhead', 'aggregate_type']);
         $eventStore->addIndex(['recorded_on']);
         $eventStore->addIndex(['type']);
 
         $vehicle = $schema->createTable('vehicle');
+        $vehicle->addColumn('_id', 'integer', ['nullable' => false, 'autoincrement' => true]);
         $vehicle->addColumn('id', 'string', ['nullable' => false, 'unique' => true, 'length' => 255]);
         $vehicle->addColumn('registration_number', 'string', ['nullable' => false, 'length' => 255]);
         $vehicle->addColumn('brand', 'string', ['nullable' => false, 'length' => 255]);
         $vehicle->addColumn('model', 'string', ['nullable' => false, 'length' => 255]);
         $vehicle->addColumn('created_at', 'datetime', ['nullable' => false]);
         $vehicle->addColumn('last_update', 'datetime', ['nullable' => false]);
+        $vehicle->setPrimaryKey(['_id']);
+        $vehicle->addIndex(['id']);
     }
 
     public function down(Schema $schema) : void
